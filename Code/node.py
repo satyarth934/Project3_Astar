@@ -25,7 +25,7 @@ class Node(object):
 				 goal_cost):
 		self.current_coords = current_coords
 		self.parent_coords = parent_coords
-		self.orientation = orientation % 360
+		self.orientation = orientation % 360 if orientation is not None else None
 		self.movement_cost = movement_cost
 		self.goal_cost = goal_cost
 
