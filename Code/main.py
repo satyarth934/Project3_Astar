@@ -45,6 +45,10 @@ def aStar(start_node, goal_node, robot_radius, clearance, step_size, theta=30):
 
 
 
+	# write code to find the actual path using a star
+
+
+
 
 def main():
 	pass

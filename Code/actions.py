@@ -27,12 +27,13 @@ def actionMove(current_node, theta_step, linear_step, goal_position=None):
 	current_coords = (yf, xf)
 	parent_coords = current_node.current_coords
 	movement_cost = current_node.movement_cost + linear_step
+	orientation = current_node.orientation + theta_step
 	if goal_position is None:
 		goal_cost = None
 	else:
 		goal_cost = utils.euclideanDistance(current_coords, goal_position)
 
-	ret_val = node.Node(current_coords, parent_coords, movement_cost, goal_cost)
+	ret_val = node.Node(current_coords, parent_coords, orientation, movement_cost, goal_cost)
 
 	return ret_val
 

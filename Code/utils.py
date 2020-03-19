@@ -39,7 +39,8 @@ def findInHeap(node, node_list):
 
 
 ##
-## Finds the optimum path from the list of visited nodes
+## Finds the optimum path from the list of visited nodes 
+## by backtracking to the parents of each nodes.
 ##
 ## :param      node:           The current node that is the same as the goal node
 ## :type       node:           Node
@@ -49,20 +50,35 @@ def findInHeap(node, node_list):
 ## :returns:   List of coordinates that give the path from the start node to end node
 ## :rtype:     list
 ##
-def backtrack(node, visited_nodes):
+def backtrack(node, visited_nodes, theta_bin_size):
 	# put the goal node in the path
 	path = [node]
 
 	# backtrack all the parent nodes from the list of visited nodes
-	temp = visited_nodes[node.parent_coords]
+	temp = visited_nodes[round(node.parent_coords[0]), round(node.parent_coords[1]), orientationBin(node.orientation, theta_bin_size)]
 	while temp.parent_coords is not None:
-		path.insert(0,temp)
-		temp = visited_nodes[temp.parent_coords]
+		path.insert(0, temp)
+		temp = visited_nodes[int(round(temp.parent_coords[0])), int(round(temp.parent_coords[1])), orientationBin(temp.orientation, theta_bin_size)]
 
 	# put the start node in the path
 	path.insert(0, temp)
 
 	return path
+
+
+##
+## Returns the bin for the given angle
+##
+## :param      angle:     The angle
+## :type       angle:     float
+## :param      bin_size:  The bin size
+## :type       bin_size:  float
+##
+## :returns:   The bin to which the angle belongs in the visited dictionary
+## :rtype:     float
+##
+def orientationBin(angle, bin_size):
+	return (((angle % 360) // bin_size) * bin_size)
 
 
 ##
@@ -83,23 +99,27 @@ def drawOnMap(input_map, coords, visualize=False):
 		cv2.waitKey(10)
 
 
-def visualizePaths(input_map, optimal_path, exploration_coords=None):
+# def visualizePaths(input_map, optimal_path, exploration_coords=None):
 
-	if len(exploration_coords) > 0:
-		exp_map = copy.deepcopy(input_map)
+# 	if len(exploration_coords) > 0:
+# 		exp_map = copy.deepcopy(input_map)
 
-		for coord in exploration_coords:
-			exp_map[coord] = 255
-			cv2.imshow("Exploration Map", exp_map)
-			cv2.waitKey(1)
+# 		for coord in exploration_coords:
+# 			exp_map[coord] = 255
+# 			cv2.imshow("Exploration Map", exp_map)
+# 			cv2.waitKey(1)
 
-		print "Done with exploration"
+# 		print "Done with exploration"
 
 
-	for n in optimal_path:
-		input_map[n.current_coords] = 255
-		cv2.imshow("Exploration Map", input_map)
-		cv2.waitKey(50)
+# 	for n in optimal_path:
+# 		input_map[n.current_coords] = 255
+# 		cv2.imshow("Exploration Map", input_map)
+# 		cv2.waitKey(50)
+
+
+def visualizePaths(node_list):
+	pass
 
 
 # def main():

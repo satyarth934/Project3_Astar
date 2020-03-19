@@ -57,8 +57,9 @@ print(Node3)
 
 
 
-
-plt.grid()
+plt.minorticks_on()
+plt.grid(which='major', linestyle='-', linewidth='0.5', color='red')
+plt.grid(which='minor', color='black')
 
 ax.set_aspect('equal')
 
