@@ -111,7 +111,7 @@ def aStar(start_pos, goal_pos, robot_radius, clearance, step_size, theta=30, dup
 					if (next_node.movement_cost + next_node.goal_cost) < (visited[node_state].movement_cost + visited[node_state].goal_cost):
 						visited[node_state].current_coords = next_node.current_coords
 						visited[node_state].parent_coords = next_node.parent_coords
-						visited[node_state].orientation = next_node.orientation
+						visited[node_state].orientation = next_node.orientation % 360
 						visited[node_state].movement_cost = next_node.movement_cost
 						visited[node_state].goal_cost = next_node.goal_cost
 
