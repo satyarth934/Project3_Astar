@@ -6,13 +6,8 @@ import numpy as np
 
 import node
 import actions
+import obstacles
 import utils
-
-
-def hittingObstacle(node):
-	return False
-
-	# yet to write the logic to check obstacle
 
 
 ##
@@ -36,16 +31,16 @@ def aStar(start_pos, goal_pos, robot_radius, clearance, step_size, theta=30, dup
 	start_r, start_c = start_pos
 	goal_r, goal_c = goal_pos
 
-	start_node = node.Node(current_coords=(start_r, start_c), parent_coords=None, orientation=0, movement_cost=0, goal_cost=utils.euclideanDistance(start_pos, goal_pos))
-	goal_node = node.Node(current_coords=(goal_r, goal_c), parent_coords=None, orientation=None, movement_cost=None, goal_cost=0)
+	start_node = node.Node(current_coords=(start_r, start_c), parent_coords=None, orientation=0, parent_orientation=None, movement_cost=0, goal_cost=utils.euclideanDistance(start_pos, goal_pos))
+	goal_node = node.Node(current_coords=(goal_r, goal_c), parent_coords=None, orientation=None, parent_orientation=None, movement_cost=None, goal_cost=0)
 
 	# check if the start node lies withing the map and not on obstacles
-	if (start_node.current_coords[0] < actions.MIN_COORDS[1]) or (start_node.current_coords[0] >= actions.MAX_COORDS[1]) or (start_node.current_coords[1] < actions.MIN_COORDS[0]) or (start_node.current_coords[1] >= actions.MAX_COORDS[0]) or hittingObstacle(start_node):
+	if (start_node.current_coords[0] < actions.MIN_COORDS[1]) or (start_node.current_coords[0] >= actions.MAX_COORDS[1]) or (start_node.current_coords[1] < actions.MIN_COORDS[0]) or (start_node.current_coords[1] >= actions.MAX_COORDS[0]) or obstacles.withinObstacleSpace((start_node.current_coords[1], start_node.current_coords[0]), robot_radius, clearance):
 		print("ERROR: Invalid start node. It either lies outside the map boundary or within the obstacle region.")
 		sys.exit(0)
 
 	# check if the goal node lies withing the map and not on obstacles
-	if (goal_node.current_coords[0] < actions.MIN_COORDS[1]) or (goal_node.current_coords[0] >= actions.MAX_COORDS[1]) or (goal_node.current_coords[1] < actions.MIN_COORDS[0]) or (goal_node.current_coords[1] >= actions.MAX_COORDS[0]) or hittingObstacle(goal_node):
+	if (goal_node.current_coords[0] < actions.MIN_COORDS[1]) or (goal_node.current_coords[0] >= actions.MAX_COORDS[1]) or (goal_node.current_coords[1] < actions.MIN_COORDS[0]) or (goal_node.current_coords[1] >= actions.MAX_COORDS[0]) or obstacles.withinObstacleSpace((goal_node.current_coords[1], goal_node.current_coords[0]), robot_radius, clearance):
 		print("ERROR: Invalid goal node. It either lies outside the map boundary or within the obstacle region.")
 		sys.exit(0)
 
@@ -59,34 +54,26 @@ def aStar(start_pos, goal_pos, robot_radius, clearance, step_size, theta=30, dup
 	minheap = [((start_node.movement_cost + start_node.goal_cost), start_node)]
 	heapq.heapify(minheap)
 
-	# # defining the visited node like this avoids checking if two nodes are duplicate. because there is only 1 position to store the visited information for all the nodes that lie within this area.
-	# visited = np.zeros((int(actions.MAX_COORDS[1]/duplicate_step_thresh), int(actions.MAX_COORDS[0]/duplicate_step_thresh), int(360/duplicate_orientation_thresh)))
-	# visited[start_r, start_c, 0] = 1	# marking the start node as visited
+	# defining the visited node like this avoids checking if two nodes are duplicate. because there is only 1 position to store the visited information for all the nodes that lie within this area.
 	visited = {}
 	visited[(round(start_r), round(start_c), 0)] = start_node 	# marking the start node as visited
 
-
-	viz_visited_coords = []
+	viz_visited_coords = [start_node]
 
 	while len(minheap) > 0:
 		_, curr_node = heapq.heappop(minheap)
 
-		if curr_node.isDuplicate(goal_node):
+		# if curr_node.isDuplicate(goal_node):
+		if curr_node.goal_cost < duplicate_step_thresh:
 			print("Reached Goal!")
-
-			#########################################
-			# for k in visited:
-			# 	print("KEY:", k)
-			# 	visited[k].printNode()
-			# 	print("----------------")
-			
-			for viz_node in viz_visited_coords:
-				viz_node.printNode()
-				print("----------------")
-			#########################################
+			print("Current node:---")
+			curr_node.printNode()
+			print("Goal node:---")
+			goal_node.printNode()
 
 			# backtrack to get the path
-			path = utils.backtrack(curr_node, visited, theta)
+			path = actions.backtrack(curr_node, visited)
+			# path = None 	# FOR NOW FOR DEBUGGING PURPOSES
 
 			return (path, viz_visited_coords)
 
@@ -98,20 +85,22 @@ def aStar(start_pos, goal_pos, robot_radius, clearance, step_size, theta=30, dup
 
 			if next_node is not None:
 				# if hit an obstacle, ignore this movement
-				if hittingObstacle(next_node):
+				if obstacles.withinObstacleSpace((next_node.current_coords[1], next_node.current_coords[0]), robot_radius, clearance):
 					continue
 
 				# Check if the current node has already been visited.
 				# If it has, then see if the current path is better than the previous one
 				# based on the total cost = movement cost + goal cost
-				node_state = (round(next_node.current_coords[0]), round(next_node.current_coords[1]), utils.orientationBin(next_node.orientation + angle, theta))
+				node_state = (utils.valRound(next_node.current_coords[0]), utils.valRound(next_node.current_coords[1]), utils.orientationBin(next_node.orientation, theta))
 				
 				if node_state in visited:
 					# if current cost is a better cost
-					if (next_node.movement_cost + next_node.goal_cost) < (visited[node_state].movement_cost + visited[node_state].goal_cost):
+					# if (next_node.movement_cost + next_node.goal_cost) < (visited[node_state].movement_cost + visited[node_state].goal_cost):
+					if (next_node < visited[node_state]):
 						visited[node_state].current_coords = next_node.current_coords
 						visited[node_state].parent_coords = next_node.parent_coords
-						visited[node_state].orientation = next_node.orientation % 360
+						visited[node_state].orientation = next_node.orientation
+						visited[node_state].parent_orientation = next_node.parent_orientation
 						visited[node_state].movement_cost = next_node.movement_cost
 						visited[node_state].goal_cost = next_node.goal_cost
 
@@ -136,8 +125,16 @@ def testMain():
 	path, viz_nodes = aStar(start_pos=(1,1), goal_pos=(3,3), robot_radius=0, clearance=0, step_size=1, theta=30, duplicate_step_thresh=0.5, duplicate_orientation_thresh=30)
 
 
-	pickle.dump( path, open( "optimum_path.pickle", "wb" ) )
-	pickle.dump( viz_nodes, open( "viz_nodes.pickle", "wb" ) )
+	print("----------------")
+	for viz_node in viz_nodes:
+		viz_node.printNode()
+		print("----------------")
+
+
+
+
+	# pickle.dump( path, open( "optimum_path.pickle", "wb" ) )
+	# pickle.dump( viz_nodes, open( "viz_nodes.pickle", "wb" ) )
 
 
 	# plt.figure("Explorations")

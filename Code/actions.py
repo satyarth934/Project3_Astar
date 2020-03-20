@@ -24,18 +24,52 @@ def actionMove(current_node, theta_step, linear_step, goal_position=None):
 	if (xf < MIN_COORDS[0]) or (xf >= MAX_COORDS[0]) or (yf < MIN_COORDS[1]) or (yf >= MAX_COORDS[1]):
 		return None
 
-	current_coords = (yf, xf)
-	parent_coords = current_node.current_coords
-	movement_cost = current_node.movement_cost + linear_step
-	orientation = current_node.orientation + theta_step
+	cc = (yf, xf)
+	pc = current_node.current_coords
+	ori = current_node.orientation + theta_step
+	pori = current_node.orientation
+	mc = current_node.movement_cost + linear_step
 	if goal_position is None:
-		goal_cost = None
+		gc = None
 	else:
-		goal_cost = utils.euclideanDistance(current_coords, goal_position)
+		gc = utils.euclideanDistance(cc, goal_position)
 
-	ret_val = node.Node(current_coords, parent_coords, orientation, movement_cost, goal_cost)
+	ret_val = node.Node(current_coords=cc, parent_coords=pc, orientation=ori, parent_orientation=pori, movement_cost=mc, goal_cost=gc)
 
 	return ret_val
+
+
+##
+## Finds the optimum path from the list of visited nodes 
+## by backtracking to the parents of each nodes.
+##
+## :param      node:           The current node that is the same as the goal node
+## :type       node:           Node
+## :param      visited_nodes:  The visited nodes dictionary with current coordinates as the key
+## :type       visited_nodes:  dictionary
+##
+## :returns:   List of coordinates that give the path from the start node to end node
+## :rtype:     list
+##
+def backtrack(node, visited_nodes):
+	# put the goal node in the path
+	path = [node]
+
+	# backtrack all the parent nodes from the list of visited nodes
+	temp = visited_nodes[(utils.valRound(node.parent_coords[0]), utils.valRound(node.parent_coords[1]), node.parent_orientation)]
+
+	i = 0
+	while temp.parent_coords is not None:
+		path.insert(0, temp)
+		temp = visited_nodes[(utils.valRound(temp.parent_coords[0]), utils.valRound(temp.parent_coords[1]), temp.parent_orientation)]
+
+		i += 1
+		print("itr %s" % (i))
+
+	# put the start node in the path
+	path.insert(0, temp)
+
+	return path
 
 
 def testMain():
