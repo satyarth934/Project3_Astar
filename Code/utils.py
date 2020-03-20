@@ -39,34 +39,6 @@ def findInHeap(node, node_list):
 
 
 ##
-## Finds the optimum path from the list of visited nodes 
-## by backtracking to the parents of each nodes.
-##
-## :param      node:           The current node that is the same as the goal node
-## :type       node:           Node
-## :param      visited_nodes:  The visited nodes dictionary with current coordinates as the key
-## :type       visited_nodes:  dictionary
-##
-## :returns:   List of coordinates that give the path from the start node to end node
-## :rtype:     list
-##
-def backtrack(node, visited_nodes, theta_bin_size):
-	# put the goal node in the path
-	path = [node]
-
-	# backtrack all the parent nodes from the list of visited nodes
-	temp = visited_nodes[round(node.parent_coords[0]), round(node.parent_coords[1]), orientationBin(node.orientation, theta_bin_size)]
-	while temp.parent_coords is not None:
-		path.insert(0, temp)
-		temp = visited_nodes[int(round(temp.parent_coords[0])), int(round(temp.parent_coords[1])), orientationBin(temp.orientation, theta_bin_size)]
-
-	# put the start node in the path
-	path.insert(0, temp)
-
-	return path
-
-
-##
 ## Returns the bin for the given angle
 ##
 ## :param      angle:     The angle
@@ -99,6 +71,10 @@ def drawOnMap(input_map, coords, visualize=False):
 		cv2.waitKey(10)
 
 
+def valRound(x):
+	return (int(x) if x < (int(x)+0.5) else int(x)+0.5)
+
+
 # def visualizePaths(input_map, optimal_path, exploration_coords=None):
 
 # 	if len(exploration_coords) > 0:
@@ -122,9 +98,18 @@ def visualizePaths(node_list):
 	pass
 
 
-# def main():
-# 	print(euclideanDistance((10,10), (12,12)))
+def testMain():
+	# print(euclideanDistance((10,10), (12,12)))
+
+	# print((0.2), valRound(0.2))
+	# print((0.7), valRound(0.7))
+	# print((1.1), valRound(1.1))
+	# print((5), valRound(5))
+	# print((4.6), valRound(4.6))
+	# print((4.5), valRound(4.5))
+	
+	pass
 
 
-# if __name__ == '__main__':
-# 	main()
+if __name__ == '__main__':
+	testMain()
