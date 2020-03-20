@@ -101,7 +101,7 @@ def testMain():
     # print(obstacleSpace(50,149,0,0))
     # print(obstacleSpace(295,195,0,0))
 
-    drawObstacle()
+    generateMap()
 
 if __name__ == '__main__':
     testMain()
