@@ -21,13 +21,38 @@ class Node(object):
 				 current_coords, 
 				 parent_coords, 
 				 orientation,
+				 parent_orientation,
 				 movement_cost, 
 				 goal_cost):
 		self.current_coords = current_coords
 		self.parent_coords = parent_coords
 		self.orientation = orientation % 360 if orientation is not None else None
+		self.parent_orientation = parent_orientation % 360 if parent_orientation is not None else None
 		self.movement_cost = movement_cost
 		self.goal_cost = goal_cost
+
+
+	def __gt__(self, other):
+		return ((self.movement_cost + self.goal_cost) > (other.movement_cost + other.goal_cost))
+
+
+	def __lt__(self, other):
+		return ((self.movement_cost + self.goal_cost) < (other.movement_cost + other.goal_cost))
+
+
+	def __ge__(self, other):
+		return ((self.movement_cost + self.goal_cost) >= (other.movement_cost + other.goal_cost))
+
+
+	def __le__(self, other):
+		return ((self.movement_cost + self.goal_cost) <= (other.movement_cost + other.goal_cost))
+
+
+	def __eq__(self, other):
+		return ((self.movement_cost + self.goal_cost) == (other.movement_cost + other.goal_cost))
+
+
+	
 
 
 	##
