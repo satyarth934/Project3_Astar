@@ -37,33 +37,33 @@ def obstacleSpace(x,y,radius,clearance):
     
     #check kite
     if kite_line_1 > 0 and kite_line_2 > 0 and kite_line_3 < 0 and kite_line_4 < 0 or point.distance(kite) <= radius+clearance:
-        flag = 1
+        flag = True
     
     #check rectangle
     if rect_line_1 < 0 and rect_line_2 > 0 and rect_line_3 > 0 and rect_line_4 < 0 or point.distance(rectangle) <= radius+clearance:
-        flag = 1
+        flag = True
     
     #check polygon
     if quad_1_1>0 and quad_1_2>0 and quad_1_3<0 and quad_1_4<0:
-        flag_1 = 1
+        flag_1 = True
     else:
         flag_1 = 0
 
     if quad_2_1 < 0 and quad_2_2 > 0 and quad_2_3 > 0 and quad_2_4 > 0:
-        flag_2 = 1
+        flag_2 = True
     else:
         flag_2 = 0
 
     if flag_1 == 1 or flag_2 == 1 or point.distance(complex_polygon) <= radius+clearance:
-        flag = 1
+        flag = True
     
     #circle
     if(((x - (225))**2 + (y - (150))**2 - (25+radius+clearance)**2) <= 0) :
-        flag = 1
+        flag = True
         
     #ellipse
     if (((x - (150))/(40+radius+clearance))**2 + ((y - (100))/(20+radius+clearance))**2 - 1) <= 0:
-        flag = 1    
+        flag = True    
     return flag
 
 
