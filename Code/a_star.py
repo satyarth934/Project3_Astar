@@ -8,6 +8,7 @@ import node
 import actions
 import obstacles
 import utils
+import visualization as viz
 
 
 ##
@@ -125,10 +126,13 @@ def testMain():
 	path, viz_nodes = aStar(start_pos=(1,1), goal_pos=(3,3), robot_radius=0, clearance=0, step_size=1, theta=30, duplicate_step_thresh=0.5, duplicate_orientation_thresh=30)
 
 
-	print("----------------")
-	for viz_node in viz_nodes:
-		viz_node.printNode()
-		print("----------------")
+	# print("----------------")
+	# for viz_node in path:
+	# 	viz_node.printNode()
+	# 	print("----------------")
+	
+	# viz.plainPlot(path)
+	viz.plainQuiver(path)
 
 
 
