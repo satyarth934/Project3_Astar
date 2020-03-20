@@ -58,13 +58,9 @@ def backtrack(node, visited_nodes):
 	# backtrack all the parent nodes from the list of visited nodes
 	temp = visited_nodes[(utils.valRound(node.parent_coords[0]), utils.valRound(node.parent_coords[1]), node.parent_orientation)]
 
-	i = 0
 	while temp.parent_coords is not None:
 		path.insert(0, temp)
 		temp = visited_nodes[(utils.valRound(temp.parent_coords[0]), utils.valRound(temp.parent_coords[1]), temp.parent_orientation)]
-
-		i += 1
-		print("itr %s" % (i))
 
 	# put the start node in the path
 	path.insert(0, temp)
