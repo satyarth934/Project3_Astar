@@ -133,6 +133,7 @@ def testMain():
 	
 	# viz.plainPlot(path)
 	viz.plainQuiver(path)
+	viz.explorationQuiver(viz_nodes)
 
 
 

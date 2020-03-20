@@ -53,13 +53,21 @@ class Node(object):
 
 
 	def getXYCoords(self):
-		return (self.current_coords[1], self.current_coords[0])
+		if self.current_coords is not None:
+			return (self.current_coords[1], self.current_coords[0])
+		return None
 
 
 	def getRowColCoords(self):
-		return (self.current_coords)
+		if self.current_coords is not None:
+			return (self.current_coords)
+		return None
 
 	
+	def getParentXYCoords(self):
+		if self.parent_coords is not None:
+			return (self.parent_coords[1], self.parent_coords[0])
+		return None
 
 
 	##
