@@ -2,9 +2,9 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
 
-def obstacleSpace(x,y,radius,clearance):
+def withinObstacleSpace((x, y), radius, clearance):
 
-    flag = 0
+    flag = False
     flag_1 = 0
     flag_2 = 0
     point = Point(x,y)
@@ -67,4 +67,9 @@ def obstacleSpace(x,y,radius,clearance):
     return flag
 
 
-print(obstacleSpace(100,75,0,0))
+def testMain():
+    print(withinObstacleSpace((100,75),0,0))
+
+
+if __name__ == '__main__':
+    testMain()
