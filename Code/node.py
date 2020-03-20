@@ -52,6 +52,13 @@ class Node(object):
 		return ((self.movement_cost + self.goal_cost) == (other.movement_cost + other.goal_cost))
 
 
+	def getXYCoords(self):
+		return (self.current_coords[1], self.current_coords[0])
+
+
+	def getRowColCoords(self):
+		return (self.current_coords)
+
 	
 
 
