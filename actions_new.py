@@ -13,7 +13,7 @@ MIN_COORDS = (-5, -5)
 MAX_COORDS = (5, 5)
 
 
-def backtrack(node, visited_nodes, rev=False):
+def backtrack(node, visited_nodes):
 	# put the goal node in the path
 	path = [node]
 
@@ -21,25 +21,17 @@ def backtrack(node, visited_nodes, rev=False):
 	temp = visited_nodes[utils.getKey(node.parent_coords[0], node.parent_coords[1], node.parent_orientation)]
 
 	while temp.parent_coords is not None:
-		if rev:
-			path.append(temp)
-		else:
-			path.insert(0, temp)
-		# print("=====================================BACKTRACKING=============")
-		# temp.printNode()
-		# print("==================")
+		path.insert(0, temp)
+
 		temp = visited_nodes[utils.getKey(temp.parent_coords[0], temp.parent_coords[1], temp.parent_orientation)]
 
 	# put the start node in the path
-	if rev:
-		path.append(temp)
-	else:
-		path.insert(0, temp)
+	path.insert(0, temp)
 
 	return path
 
 
-def actionMove(current_node, next_action, goal_position, plotter=plt):
+def actionMove(current_node, next_action, goal_position, plotter=plt, viz_please=False):
 	Xi, Yi = current_node.getXYCoords()
 	Thetai = current_node.orientation
 	UL, UR = next_action
@@ -67,7 +59,10 @@ def actionMove(current_node, next_action, goal_position, plotter=plt):
 		Xn += 0.5*r * (UL + UR) * math.cos(Thetan) * dt
 		Yn += 0.5*r * (UL + UR) * math.sin(Thetan) * dt
 		Thetan += (r / L) * (UR - UL) * dt
-		plotter.plot([Xs, Xn], [Ys, Yn], color="blue")
+
+		if viz_please:
+			plotter.plot([Xs, Xn], [Ys, Yn], color="blue")
+		
 		mc += utils.euclideanDistance((Xs,Ys), (Xn,Yn))
 
 		# if the intermediate step hits a boundary
