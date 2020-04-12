@@ -1,6 +1,10 @@
-import matplotlib.pyplot as plt
-import numpy as np
+import sys
 import math
+import numpy as np
+import matplotlib.pyplot as plt
+sys.dont_write_bytecode = True
+
+import obstacles
 
 
 def plot_curve(curr_node, plotter=plt, color="blue", linewidth=1):
@@ -45,8 +49,7 @@ def markNodeXY(marker_node_xy, plotter=plt, color='#EE82EE', marker='o'):
 
 
 def markNode(marker_node, plotter=plt, color='#EE82EE', marker='o'):
-    x, y = marker_node.getXYCoords()
-    plotter.plot(x, y, color=color, marker=marker, markersize=7)
+    markNodeXY(marker_node.getXYCoords(), plotter=plotter, color=color, marker=marker)
 
 
 def plotPath(path, rev=False, pause_time=0.001, plotter=plt, color="black", linewidth=2):
@@ -57,4 +60,24 @@ def plotPath(path, rev=False, pause_time=0.001, plotter=plt, color="black", line
 
     for node_itr in path_plt:
         plot_curve(node_itr, color=color, plotter=plotter, linewidth=linewidth)
+        plt.show()
         plt.pause(pause_time)
+
+
+# def plotNodes(node_list, plotter=plt):
+#     pass
+
+
+def initPlot(start_xy, goal_xy, title=""):
+    fig, ax = plt.subplots()
+    fig.suptitle(title, fontsize=16)
+
+    ax.set(xlim=(-5, 5), ylim = (-5, 5))
+    ax.set_aspect('equal')
+
+    obstacles.generateMap(plotter=ax)
+
+    markNodeXY(start_xy, plotter=ax, color='#00FF00', marker='o')
+    markNodeXY(goal_xy, plotter=ax, color='#FF0000', marker='^')
+
+    return ax

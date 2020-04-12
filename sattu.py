@@ -100,16 +100,19 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 					plt.show()
 					plt.pause(0.001)
 
-				# Check if the current node is a goal node.
+				"""
+				Check if the current node is a goal node.
+				"""
 				if new_node.goal_cost < GOAL_REACH_THRESH:
 					path = an.backtrack(new_node, visited)
 					print("Reached Goal!")
+					visited_viz_nodes.append(new_node)
 					if viz_please:
 						viz.plotPath(path, rev=True, pause_time=0.5, plotter=ax, color="lime", linewidth=4)
 
 						plt.ioff()
 						plt.show()
-					return path
+					return (path, visited_viz_nodes)
 
 				# Mark node as visited, 
 				# Append to min_heap queue,
@@ -135,8 +138,8 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 
 def main():
 	start_rc = (-3, -4)
-	# goal_rc = (-3, 0)
-	goal_rc = (-4.5, -4.5)
+	goal_rc = (-3, 0)
+	# goal_rc = (-4.5, -4.5)
 	theta = 0
 	
 	rpm1 = 10
@@ -145,8 +148,19 @@ def main():
 	clearance = 0.2
 
 	start_time = time.clock()
-	a_star(start_rc=start_rc, goal_rc=goal_rc, orientation=theta, rpm1=10, rpm2=20, clearance=0.2, viz_please=True)
+	path, visited_viz_nodes = a_star(start_rc=start_rc, goal_rc=goal_rc, orientation=theta, rpm1=10, rpm2=20, clearance=0.2, viz_please=False)
 	print("Time taken for Astar:", time.clock() - start_time)
+
+	np.save("path.npy", path)
+	np.save("visited_viz_nodes.npy", visited_viz_nodes)
+
+	plotter = viz.initPlot(start_rc[::-1], goal_rc[::-1], title="Final Plotting")
+	plt.ion()
+	viz.plotPath(path=visited_viz_nodes, rev=False, pause_time=0.001, plotter=plotter, color="blue", linewidth=1)
+	viz.plotPath(path=path, rev=True, pause_time=0.001, plotter=plotter, color="lime", linewidth=4)
+	plt.ioff()
+	plt.show()
+
 
 
 if __name__ == '__main__':
