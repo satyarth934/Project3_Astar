@@ -129,14 +129,14 @@ def generateMap(plotter=plt):
     # pickle.dump(ax, file('map.pickle', 'wb'))
 
 def testMain():
-    print(withinObstacleSpace((0,-2),0,0))
+    print(withinObstacleSpace((-2.1, -1.4),0,0))
 
     fig, ax = plt.subplots()
     ax.set(xlim=(-5, 5), ylim = (-5, 5))
     ax.set_aspect('equal')
 
-    generateMap()
-    
+    generateMap(ax)
+
     plt.show()
     
 
