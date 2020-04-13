@@ -1,9 +1,11 @@
+import os
 import sys
 import math
 import numpy as np
 import matplotlib.pyplot as plt
 sys.dont_write_bytecode = True
 
+import sattu
 import obstacles
 
 
@@ -52,17 +54,25 @@ def markNode(marker_node, plotter=plt, color='#EE82EE', marker='o'):
     markNodeXY(marker_node.getXYCoords(), plotter=plotter, color=color, marker=marker)
 
 
-def plotPath(path, rev=False, pause_time=0.001, plotter=plt, color="black", linewidth=2):
+def plotPath(path, rev=False, pause_time=0.001, plotter=plt, color="black", linewidth=2, write_path_prefix=-1, show=False, skip_frames=8):
     if rev:
         path_plt = path[::-1]
     else:
         path_plt = path
 
-    for node_itr in path_plt:
+    for i, node_itr in enumerate(path_plt):
         plot_curve(node_itr, color=color, plotter=plotter, linewidth=linewidth)
-        plt.show()
-        plt.pause(pause_time)
+        if i % skip_frames == 0:
+            if write_path_prefix > -1:
+                write_path = os.path.join(sattu.OUTPUT_DIR, str(write_path_prefix) + ".png")
+                plt.savefig(write_path)
+                write_path_prefix += 1
 
+            if show:
+                plt.show()
+                plt.pause(pause_time)
+
+    return write_path_prefix
 
 # def plotNodes(node_list, plotter=plt):
 #     pass
