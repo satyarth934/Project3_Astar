@@ -104,6 +104,8 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 				"""
 				if new_node.goal_cost < GOAL_REACH_THRESH:
 					print("Reached Goal!")
+					print("Final Node --- ")
+					new_node.printNode()
 					# visited.update({node_key: new_node})
 					# min_heap.append(((new_node.movement_cost + new_node.goal_cost), new_node))
 					visited_viz_nodes.append(new_node)
@@ -131,7 +133,6 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 				if node_key in visited:
 					if new_node < visited[node_key]:
 						visited[node_key] = new_node
-
 						# h_idx = utils.findInHeap(node=new_node, node_list=min_heap)
 						# if h_idx > -1:
 						# 	del min_heap[h_idx]
@@ -155,8 +156,8 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 def main():
 	# start_rc = (-4, -4)
 	# goal_rc = (-1, -2)
-	start_rc = (-3, -4)
-	goal_rc = (-3, 0)
+	start_rc = (-4, -4)
+	goal_rc = (4, 4)
 	theta = 0
 	
 	rpm1 = 10
@@ -168,18 +169,18 @@ def main():
 	path, visited_viz_nodes = a_star(start_rc=start_rc, goal_rc=goal_rc, orientation=theta, rpm1=10, rpm2=20, clearance=0.2, viz_please=False)
 	print("Time taken for Astar:", time.clock() - start_time, "seconds")
 
-	# np.save("./path_dumps/path.npy", path)
-	# np.save("./path_dumps/visited_viz_nodes.npy", visited_viz_nodes)
+	np.save("./path_dumps/path_final.npy", path)
+	np.save("./path_dumps/visited_viz_nodes_final.npy", visited_viz_nodes)
 
 	print("Number of visited nodes:", len(visited_viz_nodes))
 	print("Number of nodes in path:", len(path))
 
 	plotter = viz.initPlot(start_rc[::-1], goal_rc[::-1], title="Final Plotting")
-	# plt.savefig(os.path.join(OUTPUT_DIR, "1.png"))
+	plt.savefig(os.path.join(OUTPUT_DIR, "1.png"))
 	plt.ion()
 	i = 2
-	# i = viz.plotPath(path=visited_viz_nodes, rev=False, pause_time=0.001, plotter=plotter, color="blue", linewidth=1, write_path_prefix=-1, show=False, skip_frames=25)
-	i = viz.plotPath(path=path, rev=True, pause_time=0.001, plotter=plotter, color="lime", linewidth=4, write_path_prefix=-1, show=False, skip_frames=1)
+	i = viz.plotPath(path=visited_viz_nodes, rev=False, pause_time=0.001, plotter=plotter, color="blue", linewidth=1, write_path_prefix=i, show=False, skip_frames=25)
+	i = viz.plotPath(path=path, rev=True, pause_time=0.001, plotter=plotter, color="lime", linewidth=4, write_path_prefix=i, show=False, skip_frames=1)
 	plt.ioff()
 	print("Done with plots.")
 	plt.show()

@@ -18,12 +18,14 @@ def backtrack(node, visited_nodes):
 	path = [node]
 
 	# backtrack all the parent nodes from the list of visited nodes
-	temp = visited_nodes[utils.getKey(node.parent_coords[0], node.parent_coords[1], node.parent_orientation)]
+	node_key = utils.getKey(node.parent_coords[0], node.parent_coords[1], node.parent_orientation)
+	temp = visited_nodes[node_key]
 
 	while temp.parent_coords is not None:
 		path.insert(0, temp)
 
-		temp = visited_nodes[utils.getKey(temp.parent_coords[0], temp.parent_coords[1], temp.parent_orientation)]
+		temp_node_key = utils.getKey(temp.parent_coords[0], temp.parent_coords[1], temp.parent_orientation)
+		temp = visited_nodes[temp_node_key]
 
 	# put the start node in the path
 	path.insert(0, temp)
@@ -67,12 +69,10 @@ def actionMove(current_node, next_action, goal_position, plotter=plt, viz_please
 
 		# if the intermediate step hits a boundary
 		if (Yn < MIN_COORDS[0]) or (Yn >= MAX_COORDS[0]) or (Xn < MIN_COORDS[1]) or (Xn >= MAX_COORDS[1]):
-			# print("out of bound")
 			return None 
 
 		# if the intermediate step hits an obstacle
 		if (obstacles.withinObstacleSpace((Xn, Yn), radius=sattu.ROBOT_RADIUS, clearance=sattu.OBSTACLE_CLEARANCE)):
-			# print("In obstacle")
 			return None
 
 		# curved_path.append((Xn, Yn))
