@@ -67,7 +67,7 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 	visited.update(
 		{(utils.getKey(start_rc[0], start_rc[1], start_node.orientation)): start_node})
 
-	visited_viz_nodes = []
+	visited_viz_nodes = [start_node]
 
 	"""
 	Initialize the plot figures if the visualization flag is true.
@@ -96,21 +96,21 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 			new_node = an.actionMove(current_node=curr_node, next_action=action, goal_position=goal_rc)
 
 			# Check if all the nodes are valid or not.			
-			if (new_node is not None) and (not obstacles.withinObstacleSpace(new_node.getXYCoords(), radius=ROBOT_RADIUS, clearance=OBSTACLE_CLEARANCE)):
-
-				if viz_please:
-					viz.plot_curve(new_node, plotter=ax)
-					plt.show()
-					plt.pause(0.001)
+			# if (new_node is not None) and (not obstacles.withinObstacleSpaceFake(new_node.getXYCoords(), radius=ROBOT_RADIUS, clearance=OBSTACLE_CLEARANCE)):
+			if (new_node is not None):
 
 				"""
 				Check if the current node is a goal node.
 				"""
 				if new_node.goal_cost < GOAL_REACH_THRESH:
-					path = an.backtrack(new_node, visited)
 					print("Reached Goal!")
+					# visited.update({node_key: new_node})
+					# min_heap.append(((new_node.movement_cost + new_node.goal_cost), new_node))
 					visited_viz_nodes.append(new_node)
+					
+					path = an.backtrack(new_node, visited)
 					if viz_please:
+						viz.plot_curve(new_node, plotter=ax, color="red")
 						viz.plotPath(path, rev=True, pause_time=0.5, plotter=ax, color="lime", linewidth=4)
 
 						plt.ioff()
@@ -123,25 +123,29 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 				Update if already visited.
 				"""
 				node_key = (utils.getKey(new_node.current_coords[0], new_node.current_coords[1], new_node.orientation))
+				# print("NODE KEY:", node_key) ####################
+				# new_node.printNode()###########
+				# print("----")##########
+				# print("number of visited nodes:", len(visited.keys()))##########
 
 				if node_key in visited:
 					if new_node < visited[node_key]:
 						visited[node_key] = new_node
 
-						h_idx = utils.findInHeap(node=new_node, node_list=min_heap)
-						if h_idx > -1:
-							min_heap[h_idx] = ((new_node.movement_cost + new_node.goal_cost), new_node)
+						# h_idx = utils.findInHeap(node=new_node, node_list=min_heap)
+						# if h_idx > -1:
+						# 	del min_heap[h_idx]
+						min_heap.append(((new_node.movement_cost + new_node.goal_cost), new_node))
 				else:
+					if viz_please:
+						viz.plot_curve(new_node, plotter=ax, color="red")
+						plt.show()
+						plt.pause(0.001)
+
 					visited.update({node_key: new_node})
 					min_heap.append(((new_node.movement_cost + new_node.goal_cost), new_node))
 
 					visited_viz_nodes.append(new_node)
-			else:
-				# print("Within obstacle space")
-				# curr_node.printNode()
-				# print("---")
-				# print ("Node is None:" if new_node is None else "Within obstacle:", )
-				pass
 
 
 		# Heapify the min heap to update the minimum node in the list.
@@ -149,11 +153,10 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 
 
 def main():
-	# start_rc = (-3, -4)
-	start_rc = (-4, 4)
-	goal_rc = (4, -4)
-	# goal_rc = (-3, 0)
-	# goal_rc = (-4.5, -4.5)
+	# start_rc = (-4, -4)
+	# goal_rc = (-1, -2)
+	start_rc = (-3, -4)
+	goal_rc = (-3, 0)
 	theta = 0
 	
 	rpm1 = 10
@@ -163,7 +166,7 @@ def main():
 
 	start_time = time.clock()
 	path, visited_viz_nodes = a_star(start_rc=start_rc, goal_rc=goal_rc, orientation=theta, rpm1=10, rpm2=20, clearance=0.2, viz_please=False)
-	print("Time taken for Astar:", time.clock() - start_time)
+	print("Time taken for Astar:", time.clock() - start_time, "seconds")
 
 	# np.save("./path_dumps/path.npy", path)
 	# np.save("./path_dumps/visited_viz_nodes.npy", visited_viz_nodes)
