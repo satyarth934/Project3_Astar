@@ -25,6 +25,9 @@ GOAL_REACH_THRESH = 0.2 	# units in meters
 ROBOT_RADIUS = 0.105
 OBSTACLE_CLEARANCE = 0.2
 
+# Output directory
+OUTPUT_DIR = "./output"
+
 
 def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_please=False):
 	"""
@@ -114,9 +117,11 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 						plt.show()
 					return (path, visited_viz_nodes)
 
-				# Mark node as visited, 
-				# Append to min_heap queue,
-				# Update if already visited.
+				"""
+				Mark node as visited, 
+				Append to min_heap queue,
+				Update if already visited.
+				"""
 				node_key = (utils.getKey(new_node.current_coords[0], new_node.current_coords[1], new_node.orientation))
 
 				if node_key in visited:
@@ -131,14 +136,23 @@ def a_star(start_rc, goal_rc, orientation, rpm1=10, rpm2=20, clearance=0.2, viz_
 					min_heap.append(((new_node.movement_cost + new_node.goal_cost), new_node))
 
 					visited_viz_nodes.append(new_node)
+			else:
+				# print("Within obstacle space")
+				# curr_node.printNode()
+				# print("---")
+				# print ("Node is None:" if new_node is None else "Within obstacle:", )
+				pass
+
 
 		# Heapify the min heap to update the minimum node in the list.
 		heapq.heapify(min_heap)
 
 
 def main():
-	start_rc = (-3, -4)
-	goal_rc = (-3, 0)
+	# start_rc = (-3, -4)
+	start_rc = (-4, 4)
+	goal_rc = (4, -4)
+	# goal_rc = (-3, 0)
 	# goal_rc = (-4.5, -4.5)
 	theta = 0
 	
@@ -151,14 +165,20 @@ def main():
 	path, visited_viz_nodes = a_star(start_rc=start_rc, goal_rc=goal_rc, orientation=theta, rpm1=10, rpm2=20, clearance=0.2, viz_please=False)
 	print("Time taken for Astar:", time.clock() - start_time)
 
-	np.save("path.npy", path)
-	np.save("visited_viz_nodes.npy", visited_viz_nodes)
+	# np.save("./path_dumps/path.npy", path)
+	# np.save("./path_dumps/visited_viz_nodes.npy", visited_viz_nodes)
+
+	print("Number of visited nodes:", len(visited_viz_nodes))
+	print("Number of nodes in path:", len(path))
 
 	plotter = viz.initPlot(start_rc[::-1], goal_rc[::-1], title="Final Plotting")
+	# plt.savefig(os.path.join(OUTPUT_DIR, "1.png"))
 	plt.ion()
-	viz.plotPath(path=visited_viz_nodes, rev=False, pause_time=0.001, plotter=plotter, color="blue", linewidth=1)
-	viz.plotPath(path=path, rev=True, pause_time=0.001, plotter=plotter, color="lime", linewidth=4)
+	i = 2
+	# i = viz.plotPath(path=visited_viz_nodes, rev=False, pause_time=0.001, plotter=plotter, color="blue", linewidth=1, write_path_prefix=-1, show=False, skip_frames=25)
+	i = viz.plotPath(path=path, rev=True, pause_time=0.001, plotter=plotter, color="lime", linewidth=4, write_path_prefix=-1, show=False, skip_frames=1)
 	plt.ioff()
+	print("Done with plots.")
 	plt.show()
 
 
